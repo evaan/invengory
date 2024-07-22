@@ -20,13 +20,16 @@ func GetWhoAmI(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Context().Value("user")
 
-	w.Header().Set("Content-Type", "application/json")
 	if user != nil {
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(&UserJSON{
 			FullName:              user.(*User).FullName,
 			Email:                 user.(*User).Email,
 			GoogleProfilePhotoURL: user.(*User).GoogleProfilePhotoURL,
 		})
+	} else {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("{\"error\":\"Not Authenticated.\"}"))
 	}
 }
 

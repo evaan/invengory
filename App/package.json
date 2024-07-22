@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "invengory",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,28 +10,31 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@fontsource/roboto": "^5.0.13",
-    "@mui/icons-material": "^5.16.0",
-    "@mui/material": "^5.16.0",
-    "@mui/x-data-grid": "^7.9.0",
-    "@mui/x-tree-view": "^7.9.0",
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/styled": "^11.13.0",
+    "@fontsource-variable/work-sans": "^5.0.19",
+    "@tsparticles/engine": "^3.5.0",
+    "@tsparticles/react": "^3.0.0",
+    "framer-motion": "^11.3.8",
+    "jotai": "^2.9.0",
     "react": "^18.3.1",
+    "react-complex-tree": "^2.4.4",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
-    "swr": "^2.2.5"
+    "react-router-dom": "^6.25.1",
+    "swr": "^2.2.5",
+    "tsparticles": "^3.5.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.4"
   }
 }

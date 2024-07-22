@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +16,7 @@ var logger *log.Logger
 func main() {
 	logger = log.Default()
 	fmt.Println("👋 InventGory Server")
-	db, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open("postgresql://postgres:admin@192.168.4.3:5432/invengory"), &gorm.Config{})
 	if err != nil {
 		logger.Fatal("Could not connect to DB")
 	}

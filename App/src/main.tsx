@@ -1,31 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { ThemeProvider } from '@emotion/react'
-import { createTheme, CssBaseline } from '@mui/material'
-import ResponsiveAppBar from './components/ResponsiveAppBar.tsx'
-
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import App from './App'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import LoginPage from './LoginPage.tsx'
+import LoginPage from './pages/LoginPage'
+import BrowsePage from './pages/BrowsePage'
+import './styles.css';
 
+localStorage.setItem("chakra-ui-color-mode", "dark");
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>
-      <CssBaseline>
+    <ChakraProvider>
+        <ColorModeScript initialColorMode="dark" />
         <BrowserRouter>
-          <ResponsiveAppBar />
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/browse" element={<BrowsePage />} />
           </Routes>
         </BrowserRouter>
-      </CssBaseline>
-    </ThemeProvider>
-  </React.StrictMode>
+    </ChakraProvider>
+  </React.StrictMode>,
 )

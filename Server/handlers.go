@@ -134,12 +134,12 @@ func GetParts(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func GetCatagories(w http.ResponseWriter, r *http.Request) {
-	var catagories []Catagory
-	db.Where("parent_id IS NULL").Preload(clause.Associations, recursive_preload).Find(&catagories)
+func GetCategories(w http.ResponseWriter, r *http.Request) {
+	var categories []Category
+	db.Where("parent_id IS NULL").Preload(clause.Associations, recursive_preload).Find(&categories)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(&catagories)
+	json.NewEncoder(w).Encode(&categories)
 }
 
 func recursive_preload(d *gorm.DB) *gorm.DB {

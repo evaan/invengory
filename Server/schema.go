@@ -44,7 +44,7 @@ type Session struct {
 type Part struct {
 	ID         int      `gorm:"primaryKey;autoIncrement"`
 	Name       string   `gorm:"not null"`
-	Catagory   Catagory `gorm:"not null"`
+	Catagory   Category `gorm:"not null"`
 	CatagoryID int
 }
 
@@ -61,9 +61,9 @@ type PartLocation struct {
 	Stock      int `gorm:"not null"`
 }
 
-type Catagory struct {
+type Category struct {
 	ID              int    `gorm:"primaryKey;autoIncrement"`
 	Name            string `gorm:"not null"`
 	ParentID        int
-	ChildCatagories []Catagory `gorm:"foreignkey:ParentID"`
+	ChildCategories []Category `gorm:"foreignkey:ParentID"`
 }

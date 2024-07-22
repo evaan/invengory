@@ -1,5 +1,5 @@
 import { Card, Center, Text } from "@chakra-ui/react";
-import ParticlesBG from "../Particles";
+import ParticlesBG from "../components/Particles";
 import { useUser } from "../api/api";
 import { Navigate } from "react-router-dom";
 import GoogleLogin from "../components/GoogleLogin";

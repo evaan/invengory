@@ -15,7 +15,7 @@ var logger *log.Logger
 
 func main() {
 	logger = log.Default()
-	fmt.Println("👋 InventGory Server")
+	fmt.Println("👋 Invengory Server")
 	db, err = gorm.Open(postgres.Open("postgresql://postgres:admin@192.168.4.3:5432/invengory"), &gorm.Config{})
 	if err != nil {
 		logger.Fatal("Could not connect to DB")
@@ -24,7 +24,7 @@ func main() {
 	db.AutoMigrate(&Part{})
 	db.AutoMigrate(&Location{})
 	db.AutoMigrate(&PartLocation{})
-	db.AutoMigrate(&Catagory{})
+	db.AutoMigrate(&Category{})
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Session{})
 
@@ -35,7 +35,7 @@ func main() {
 	mux.HandleFunc("POST /api/auth/logout", PostLogout)
 
 	mux.HandleFunc("GET /api/parts", GetParts)
-	mux.HandleFunc("GET /api/catagories", GetCatagories)
+	mux.HandleFunc("GET /api/categories", GetCategories)
 
 	wrappedMux := NewAuthMiddleware(mux)
 	wrappedMux2 := NewCORSMiddleware(wrappedMux)

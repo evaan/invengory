@@ -1,4 +1,4 @@
-import { Card, Flex, Button, Popover, PopoverTrigger, Center, PopoverContent, PopoverArrow, PopoverBody, Image, Text, Divider } from "@chakra-ui/react";
+import { Card, Flex, Button, Popover, PopoverTrigger, Center, PopoverContent, PopoverArrow, PopoverBody, Image, Text, Divider, Link } from "@chakra-ui/react";
 import { logout, useUser } from "../api/api";
 import { Navigate } from "react-router-dom";
 
@@ -38,8 +38,8 @@ export default function Navbar() {
                             </Flex>
                         </Flex>
                         <Divider my="4px" />
-                        <Button w="100%" my="3px">Account Settings</Button>
-                        <Button w="100%" my="3px">Manage Invengory</Button>
+                        <Link href="/account"><Button w="100%" my="3px">Account Settings</Button></Link>
+                        <Link href="/manage"><Button w="100%" my="3px">Manage Invengory</Button></Link>
                         <Button colorScheme="red" w="100%" my="3px" onClick={logout}>Logout</Button>
                     </PopoverBody>
                 </PopoverContent>

@@ -3,3 +3,10 @@ export interface User {
     email: string;
     google_profile_photo_url: string;
 }
+
+export interface Category {
+    ID: number;
+    ChildCategories: Category[];
+    Name: string;
+    ParentID: number;
+}

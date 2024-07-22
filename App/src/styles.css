@@ -11,7 +11,7 @@
 }
 
 .rct-tree-item-button {
-    font-family: "Segoe UI";
+    font-family: var(--chakra-fonts-body);
     font-size: 20px;
 }
 

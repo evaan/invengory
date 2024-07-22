@@ -2,34 +2,79 @@ import { AddIcon, SearchIcon } from "@chakra-ui/icons";
 import { Box, Button, Center, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
+import { useEffect, useState } from "react";
+import { Category } from "../api/types";
 
 export default function BrowsePage() {
-    const items = {
-        root: {
-            index: 'root',
-            isFolder: true,
-            children: ['child1', 'child2'],
-            data: 'Root item',
-        },
-            child1: {
-                index: 'child1',
-                children: [],
-                data: 'Child item 1',
-        },
-            child2: {
-                index: 'child2',
-                isFolder: true,
-                children: ['child3'],
-                data: 'Child item 2',
-        },
-            child3: {
-                index: 'child3',
-                children: [],
-                data: 'Child item 3',
-        },
-    };
+    const [categories, setCategories] = useState<{ [int: number]: TreeItem }>({});
     
-    const dataProvider = new StaticTreeDataProvider(items, (item, newName) => ({ ...item, data: newName }));
+    interface TreeItem {
+        index: number;
+        isFolder: boolean;
+        children: number[];
+        data: string;
+    }
+
+    function parseCategory(category: Category): { [int: number]: TreeItem } {
+        let output: { [int: number]: TreeItem } = {};
+        output[category.ID] = {} as TreeItem;
+        output[category.ID].index = category.ID;
+        output[category.ID].isFolder = category.ChildCategories.length > 0;
+        output[category.ID].children = [];
+        output[category.ID].data = category.Name;
+        category.ChildCategories.forEach((childCategory => {
+            output[category.ID].children.push(childCategory.ID);
+            output = {...output, ...parseCategory(childCategory)}
+        }));
+        return output;
+    }
+
+    useEffect(() => {
+        fetch("/api/categories").then((response) => response.json()).then((data) => {
+            let output: { [int: number]: TreeItem } = {};
+            output[0] = {} as TreeItem;
+            output[0].index = 0;
+            output[0].isFolder = true;
+            output[0].data = "root";
+            output[0].children = [-1];
+            data.forEach((category: Category) => {
+                output = {...output, ...parseCategory(category)}
+            });
+            output[-1] = {} as TreeItem;
+            output[-1].index = -1;
+            output[-1].isFolder = true;
+            output[-1].data = "All Components";
+            output[-1].children = Object.keys(data).map(Number).map(key => key+1);
+            setCategories(output);
+        })
+    });
+    
+    // const items = {
+    //     root: {
+    //         index: 'root',
+    //         isFolder: true,
+    //         children: ['child1', 'child2'],
+    //         data: 'Root item',
+    //     },
+    //         child1: {
+    //             index: 'child1',
+    //             children: [],
+    //             data: 'Child item 1',
+    //     },
+    //         child2: {
+    //             index: 'child2',
+    //             isFolder: true,
+    //             children: ['child3'],
+    //             data: 'Child item 2',
+    //     },
+    //         child3: {
+    //             index: 'child3',
+    //             children: [],
+    //             data: 'Child item 3',
+    //     },
+    // };
+
+    const dataProvider = new StaticTreeDataProvider(categories, (item, newName) => ({ ...item, data: newName }));
     
     return (
         <>
@@ -51,13 +96,18 @@ export default function BrowsePage() {
                     <UncontrolledTreeEnvironment
                         dataProvider={dataProvider}
                         getItemTitle={item => item.data}
-                        viewState={{}}
+                        viewState={{
+                            ["tree"]: {
+                                expandedItems: [-1], 
+                                selectedItems: [-1]
+                            }
+                        }}
                         canDragAndDrop={false}
                         canDropOnFolder={false}
                         canReorderItems={false}
                         disableMultiselect={true}
                         >
-                        <Tree treeId="tree-2" rootItem="root" />
+                        <Tree treeId="tree" rootItem="0" />
                     </UncontrolledTreeEnvironment>
                 </Box>
                 <TableContainer w="70%" ml="8px">
@@ -72,17 +122,17 @@ export default function BrowsePage() {
                         <Tbody>
                         <Tr>
                             <Td></Td>
-                            <Td>Raspberry Pi 4 Model B</Td>
+                            <Td onClick={() => console.log("1")}>Raspberry Pi 4 Model B</Td>
                             <Td isNumeric textColor="#ff8986">0</Td>
                         </Tr>
                         <Tr>
                             <Td></Td>
-                            <Td>eSun Blue Filament</Td>
+                            <Td onClick={() => console.log("2")}>eSun Blue PLA+ Filament Spool</Td>
                             <Td isNumeric>6</Td>
                         </Tr>
                         <Tr>
                             <Td></Td>
-                            <Td>Jonesy Vertical Profiler</Td>
+                            <Td onClick={() => console.log("3")}>Jonesy Vertical Profiler</Td>
                             <Td isNumeric>1</Td>
                         </Tr>
                         </Tbody>

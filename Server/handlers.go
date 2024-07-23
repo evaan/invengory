@@ -120,18 +120,22 @@ func PostGoogleToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetParts(w http.ResponseWriter, r *http.Request) {
-	type PartsJSONResponse struct {
-		Parts []Part `json:"parts"`
+	type PartWithStock struct {
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
+		CategoryID int    `json:"categoryID"`
+		TotalStock int    `json:"totalStock"`
 	}
 
-	var parts []Part
+	// type PartsJSONResponse struct {
+	// 	Parts []PartWithStock `json:"parts"`
+	// }
 
-	db.Preload("Catagory").Find(&parts)
+	var parts []PartWithStock
+	db.Raw("SELECT p.*, SUM(pl.stock) AS total_stock FROM parts p LEFT JOIN part_locations pl ON p.id = pl.part_id GROUP BY p.id, p.name;").Scan(&parts)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(&PartsJSONResponse{
-		Parts: parts,
-	})
+	json.NewEncoder(w).Encode(parts)
 }
 
 func GetCategories(w http.ResponseWriter, r *http.Request) {

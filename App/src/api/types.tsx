@@ -10,3 +10,9 @@ export interface Category {
     Name: string;
     ParentID: number;
 }
+
+export interface Part {
+    ID: number;
+    Name: string;
+    Category: Category;
+}

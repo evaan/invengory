@@ -7,6 +7,8 @@ import { Category } from "../api/types";
 
 export default function BrowsePage() {
     const [categories, setCategories] = useState<{ [int: number]: TreeItem }>({});
+    const [category, setCategory] = useState<number>(-1);
+    const [parts, setParts] = useState<PartWithStock[]>([]);
     
     interface TreeItem {
         index: number;
@@ -15,13 +17,16 @@ export default function BrowsePage() {
         data: string;
     }
 
+    interface PartWithStock {
+        id: number;
+        name: string;
+        categoryID: number;
+        totalStock: number;
+    }
+
     function parseCategory(category: Category): { [int: number]: TreeItem } {
         let output: { [int: number]: TreeItem } = {};
-        output[category.ID] = {} as TreeItem;
-        output[category.ID].index = category.ID;
-        output[category.ID].isFolder = category.ChildCategories.length > 0;
-        output[category.ID].children = [];
-        output[category.ID].data = category.Name;
+        output[category.ID] = {index: category.ID, isFolder: category.ChildCategories.length > 0, children: [], data: category.Name}
         category.ChildCategories.forEach((childCategory => {
             output[category.ID].children.push(childCategory.ID);
             output = {...output, ...parseCategory(childCategory)}
@@ -32,47 +37,22 @@ export default function BrowsePage() {
     useEffect(() => {
         fetch("/api/categories").then((response) => response.json()).then((data) => {
             let output: { [int: number]: TreeItem } = {};
-            output[0] = {} as TreeItem;
-            output[0].index = 0;
-            output[0].isFolder = true;
-            output[0].data = "root";
-            output[0].children = [-1];
+            output[0] = { index: 0, isFolder: true, data: "root", children: [-1] }
             data.forEach((category: Category) => {
                 output = {...output, ...parseCategory(category)}
             });
-            output[-1] = {} as TreeItem;
-            output[-1].index = -1;
-            output[-1].isFolder = true;
-            output[-1].data = "All Components";
-            output[-1].children = Object.keys(data).map(Number).map(key => key+1);
+            output[-1] = { index: -1, isFolder: true, data: "All Components", children: data.map((category: Category) => category.ID) }
             setCategories(output);
-        })
-    });
-    
-    // const items = {
-    //     root: {
-    //         index: 'root',
-    //         isFolder: true,
-    //         children: ['child1', 'child2'],
-    //         data: 'Root item',
-    //     },
-    //         child1: {
-    //             index: 'child1',
-    //             children: [],
-    //             data: 'Child item 1',
-    //     },
-    //         child2: {
-    //             index: 'child2',
-    //             isFolder: true,
-    //             children: ['child3'],
-    //             data: 'Child item 2',
-    //     },
-    //         child3: {
-    //             index: 'child3',
-    //             children: [],
-    //             data: 'Child item 3',
-    //     },
-    // };
+        });
+        fetch("/api/parts").then((response) => response.json()).then((data) => {
+            const parts: PartWithStock[] = [];
+            data.forEach((part: PartWithStock) => {
+                parts.push(part);
+            });
+            setParts(parts);
+            console.log(parts);
+        });
+    }, []);
 
     const dataProvider = new StaticTreeDataProvider(categories, (item, newName) => ({ ...item, data: newName }));
     
@@ -106,6 +86,7 @@ export default function BrowsePage() {
                         canDropOnFolder={false}
                         canReorderItems={false}
                         disableMultiselect={true}
+                        onSelectItems={(items) => setCategory(Number(items[0]))}
                         >
                         <Tree treeId="tree" rootItem="0" />
                     </UncontrolledTreeEnvironment>
@@ -114,27 +95,23 @@ export default function BrowsePage() {
                     <Table variant='simple'>
                         <Thead>
                         <Tr>
-                            <Th>Image</Th>
                             <Th>Name</Th>
+                            <Th>Category</Th>
                             <Th isNumeric>Stock</Th>
                         </Tr>
                         </Thead>
                         <Tbody>
-                        <Tr>
-                            <Td></Td>
-                            <Td onClick={() => console.log("1")}>Raspberry Pi 4 Model B</Td>
-                            <Td isNumeric textColor="#ff8986">0</Td>
-                        </Tr>
-                        <Tr>
-                            <Td></Td>
-                            <Td onClick={() => console.log("2")}>eSun Blue PLA+ Filament Spool</Td>
-                            <Td isNumeric>6</Td>
-                        </Tr>
-                        <Tr>
-                            <Td></Td>
-                            <Td onClick={() => console.log("3")}>Jonesy Vertical Profiler</Td>
-                            <Td isNumeric>1</Td>
-                        </Tr>
+                            {
+                                parts.filter((part: PartWithStock) => category == -1 || part.categoryID === category).map((part: PartWithStock) => {
+                                    return(
+                                        <Tr>
+                                            <Td>{part.name}</Td>
+                                            <Td>{categories[part.categoryID].data}</Td>
+                                            <Td isNumeric textColor={part.totalStock == 0 ? "#ff8986" : "unset"}>{part.totalStock}</Td>
+                                        </Tr>
+                                    )
+                                })
+                            }
                         </Tbody>
                     </Table>
                 </TableContainer>

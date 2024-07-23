@@ -44,8 +44,8 @@ type Session struct {
 type Part struct {
 	ID         int      `gorm:"primaryKey;autoIncrement"`
 	Name       string   `gorm:"not null"`
-	Catagory   Category `gorm:"not null"`
-	CatagoryID int
+	Category   Category `gorm:"not null"`
+	CategoryID int
 }
 
 type Location struct {

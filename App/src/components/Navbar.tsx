@@ -22,7 +22,7 @@ export default function Navbar() {
                 <PopoverTrigger>
                     <Button h="56px">
                         <Center>
-                            <Image src={user?.google_profile_photo_url} borderRadius="50%" h="32px" w="32px" mr="6px" />
+                            <Image src={user?.google_profile_photo_url} borderRadius="50%" h="32px" w="32px" mr="6px" referrerPolicy="no-referrer" />
                             <Text>{user?.full_name}</Text>
                         </Center>
                     </Button>

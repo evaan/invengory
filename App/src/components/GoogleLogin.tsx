@@ -37,7 +37,9 @@ function GoogleLogin() {
     }, []);
 
     return (
-        <div ref={googleButton} /> //TODO: this button keeps breaking for zero reason and it pisses me off
+        <div style={{ overflow: "hidden", borderRadius: 5 }}>
+            <div ref={googleButton}/>
+        </div>
     )
 }
 

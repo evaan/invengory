@@ -7,7 +7,7 @@ import { Category } from "../api/types";
 
 export default function BrowsePage() {
     const [categories, setCategories] = useState<{ [int: number]: TreeItem }>({});
-    const [category, setCategory] = useState<number>(-1);
+    const [category, setCategory] = useState<number[]>([-1]);
     const [parts, setParts] = useState<PartWithStock[]>([]);
     
     interface TreeItem {
@@ -22,6 +22,12 @@ export default function BrowsePage() {
         name: string;
         categoryID: number;
         totalStock: number;
+    }
+
+    function getChildrenCategories(categoryNum: number): number[] {
+        return [categoryNum].concat(
+            ...categories[categoryNum].children.map(getChildrenCategories)
+        );
     }
 
     function parseCategory(category: Category): { [int: number]: TreeItem } {
@@ -50,7 +56,6 @@ export default function BrowsePage() {
                 parts.push(part);
             });
             setParts(parts);
-            console.log(parts);
         });
     }, []);
 
@@ -86,7 +91,7 @@ export default function BrowsePage() {
                         canDropOnFolder={false}
                         canReorderItems={false}
                         disableMultiselect={true}
-                        onSelectItems={(items) => setCategory(Number(items[0]))}
+                        onSelectItems={(items) => setCategory(getChildrenCategories(Number(items[0])))}
                         >
                         <Tree treeId="tree" rootItem="0" />
                     </UncontrolledTreeEnvironment>
@@ -102,9 +107,9 @@ export default function BrowsePage() {
                         </Thead>
                         <Tbody>
                             {
-                                parts.filter((part: PartWithStock) => category == -1 || part.categoryID === category).map((part: PartWithStock) => {
+                                parts.filter((part: PartWithStock) => category.includes(part.categoryID) || category.includes(-1)).map((part: PartWithStock) => {
                                     return(
-                                        <Tr>
+                                        <Tr key={part.id}>
                                             <Td>{part.name}</Td>
                                             <Td>{categories[part.categoryID].data}</Td>
                                             <Td isNumeric textColor={part.totalStock == 0 ? "#ff8986" : "unset"}>{part.totalStock}</Td>

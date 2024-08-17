@@ -1,4 +1,5 @@
 import useSWR, { mutate } from "swr"
+import { User } from "./types";
 
 export const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -17,7 +18,7 @@ export function useUser() {
     return {
         loading: isLoading,
         loggedIn: data?.error !== "Not Authenticated.",
-        user: data,
+        user: data as User,
         mutate
     }
 }

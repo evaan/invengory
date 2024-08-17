@@ -27,6 +27,7 @@ func main() {
 	db.AutoMigrate(&Category{})
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Session{})
+	db.AutoMigrate(&Permission{})
 
 	mux := http.NewServeMux()
 

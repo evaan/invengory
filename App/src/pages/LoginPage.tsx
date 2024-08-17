@@ -21,7 +21,8 @@ export default function LoginPage() {
                             </Center>
                             <Text fontSize="6xl" align="center">Invengory</Text>
                             <Text fontSize="xl" align="center">Welcome to Invengory! Please login with Google below to get started.</Text>
-                            <Center mt="16px">
+                            <Center mt="16px" flexDirection="column">
+                                <Text fontSize="md" id="errortext" align="center" color="#FF7F7F" mb="4px" hidden/>
                                 <GoogleLogin />
                             </Center>
                         </span>

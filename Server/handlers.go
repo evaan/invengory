@@ -13,19 +13,28 @@ import (
 
 func GetWhoAmI(w http.ResponseWriter, r *http.Request) {
 	type UserJSON struct {
-		FullName              string `json:"full_name"`
-		Email                 string `json:"email"`
-		GoogleProfilePhotoURL string `json:"google_profile_photo_url"`
+		FullName              string   `json:"full_name"`
+		Email                 string   `json:"email"`
+		GoogleProfilePhotoURL string   `json:"google_profile_photo_url"`
+		Permissions           []string `json:"permissions"`
 	}
 
 	user := r.Context().Value("user")
 
+	var permissions []string
+
 	if user != nil {
 		w.Header().Set("Content-Type", "application/json")
+		err = db.Model(&Permission{}).Where("user_id = ?", user.(*User).ID).Pluck("permission", &permissions).Error
+		if err != nil {
+			permissions = []string{}
+		}
+
 		json.NewEncoder(w).Encode(&UserJSON{
 			FullName:              user.(*User).FullName,
 			Email:                 user.(*User).Email,
 			GoogleProfilePhotoURL: user.(*User).GoogleProfilePhotoURL,
+			Permissions:           permissions,
 		})
 	} else {
 		w.WriteHeader(http.StatusForbidden)
@@ -68,7 +77,7 @@ func PostGoogleToken(w http.ResponseWriter, r *http.Request) {
 			// do something special if user is not in db
 		}
 
-		http.Error(w, "User Not Found", http.StatusBadRequest) // TODO: don't actually return the message
+		http.Error(w, "{\"error\":\"User could not be found.\"}", http.StatusBadRequest) // TODO: personalized message in env?
 		return
 	}
 

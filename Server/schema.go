@@ -67,3 +67,10 @@ type Category struct {
 	ParentID        int
 	ChildCategories []Category `gorm:"foreignkey:ParentID"`
 }
+
+type Permission struct {
+	ID         int    `gorm:"primaryKey;autoIncrement"`
+	UserID     string `gorm:"not null"`
+	User       User
+	Permission string `gorm:"not null"`
+}

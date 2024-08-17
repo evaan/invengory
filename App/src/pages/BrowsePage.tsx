@@ -4,12 +4,16 @@ import Navbar from "../components/Navbar";
 import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
 import { useEffect, useState } from "react";
 import { Category } from "../api/types";
+import { useUser } from "../api/api";
 
 export default function BrowsePage() {
     const [categories, setCategories] = useState<{ [int: number]: TreeItem }>({});
     const [category, setCategory] = useState<number[]>([-1]);
     const [parts, setParts] = useState<PartWithStock[]>([]);
-    
+    const { loading, user } = useUser();
+
+    const includesAny = (arr: unknown[], values: unknown[]) => values.some(v => arr.includes(v));
+
     interface TreeItem {
         index: number;
         isFolder: boolean;
@@ -57,6 +61,7 @@ export default function BrowsePage() {
             });
             setParts(parts);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const dataProvider = new StaticTreeDataProvider(categories, (item, newName) => ({ ...item, data: newName }));
@@ -64,7 +69,7 @@ export default function BrowsePage() {
     return (
         <>
             <Navbar />
-            <Flex>
+            <Flex mt="4px">
                 <InputGroup mx="8px">
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon color='gray.300' />
@@ -74,7 +79,7 @@ export default function BrowsePage() {
                         <Button colorScheme="blue" variant="ghost">Filters</Button>
                     </InputRightElement>
                 </InputGroup>
-                <Button colorScheme="green" w="25%" mr="8px"><Center><AddIcon mr="4px" /> Add Item</Center></Button>
+                <Button colorScheme="green" w="25%" mr="8px" isDisabled={loading || !includesAny(user.permissions, ["admin", "manage_parts"])}><Center><AddIcon mr="4px" /> Add Item</Center></Button>
             </Flex>
             <Flex>
                 <Box w="30%">
@@ -108,6 +113,7 @@ export default function BrowsePage() {
                         <Tbody>
                             {
                                 parts.filter((part: PartWithStock) => category.includes(part.categoryID) || category.includes(-1)).map((part: PartWithStock) => {
+                                    if (categories == null || categories[part.categoryID] == null) return <></>
                                     return(
                                         <Tr key={part.id}>
                                             <Td>{part.name}</Td>

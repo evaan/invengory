@@ -6,14 +6,20 @@ function GoogleLogin() {
     const googleButton = useRef(null);
 
     const handleGoogleToken = (token_obj: unknown) => {
-        console.log(token_obj);
+        // console.log(token_obj);
         fetch("/api/auth/google_token", {
             method: "POST",
             body: JSON.stringify(token_obj)
-        }).then(() => {
-            mutate("/api/login/whoami");
-            window.location.replace("/browse")
-        })
+        }).then(async (response) => {
+            if (response.ok) {
+                mutate("/api/login/whoami");
+                window.location.replace("/browse")
+            } else {
+                const errorText = document.getElementById("errortext");
+                errorText!.hidden = false;
+                errorText!.innerHTML = (await response.json())["error"];
+            }
+        });
     }
 
     useEffect(() => {
@@ -37,8 +43,10 @@ function GoogleLogin() {
     }, []);
 
     return (
-        <div style={{ overflow: "hidden", borderRadius: 5 }}>
-            <div ref={googleButton}/>
+        <div>
+            <div style={{ overflow: "hidden", borderRadius: 5, display: "flex", alignItems: "center" }}>
+                <div ref={googleButton}/>
+            </div>
         </div>
     )
 }
